@@ -1,0 +1,208 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link type="text/css" href="style.css" rel="stylesheet"/>
+        <script language = "javascript">
+            window.onload = function() {
+                btn = document.getElementById("button1");
+
+                btn.onclick = function() {
+                    run = validate();
+                    if (run) {
+                        numHotdogs = parseInt(document.form.hotdogs.value);
+                        numFries = parseInt(document.form.fries.value);
+                        numSodas = parseInt(document.form.sodas.value);
+                        
+                        pHotdogs = calculatePrice(numHotdogs, 3.75);
+                        pFries = calculatePrice(numFries, 2.00);
+                        pSodas = calculatePrice(numSodas, 1.80);
+                        
+                        subtotal = pHotdogs + pFries + pSodas;
+
+                        display = numHotdogs + " qty Hotdogs: $" + pHotdogs.toFixed(2) + "<br/>";
+                        display = display + numFries + " qty Fries: $" + pFries.toFixed(2) + "<br/>";
+                        display = display + numSodas + " qty Sodas: $" + pSodas.toFixed(2) + "<br/>";
+                        display = display + "Subtotal: $" + subtotal.toFixed(2) + "<br/>";
+
+                        results = displayDiscount(subtotal);
+                        
+                        if (results[0] != subtotal) {
+                            subtotal = results[0];
+                            discount = results[1];
+                            displayResult = results[2];
+                            display += displayResult;
+                        }
+
+                        //calculate and round sales tax (6.25%)
+                        tax = calculatePrice(subtotal, 0.0625);
+                        taxRounded = tax.toFixed(2);
+                        display = display + "Massachusetts meals tax: $" + taxRounded + "<br/><br/>";
+
+                        total = subtotal + tax;
+                        total = total.toFixed(2);
+                        display = display + "<strong>Total: $" + total + "</strong>";
+
+                        document.getElementById("result").innerHTML = display;
+                    } 
+                    
+                }
+            }
+
+            function calculatePrice(numItems, itemPrice) {
+                price = numItems * itemPrice;
+                return price;
+            }
+
+            function displayDiscount(subtotal, display) {
+                newSubtotal = subtotal;
+                results = [];
+                results.push(newSubtotal);
+
+                if (subtotal >= 20) {
+                    //calculate and apply 10% discount to subtotal
+                    discount = subtotal * 0.1;
+                    newSubtotal = subtotal - discount;
+
+                    //round discount and subtotal
+                    discountRounded = discount.toFixed(2);
+                    subtotalRounded = newSubtotal.toFixed(2);
+
+                    results[0] = newSubtotal;
+                    results.push(discountRounded);
+
+                    //display discount and updated subtotal
+                    result = "<strong>You received Joe's special offer - a 10% discount!</strong><br>";
+                    result = result + "Discount applied: -$" + discountRounded + "<br>";
+                    result = result + "Updated subtotal: $" + subtotalRounded + "<br>";
+                    results.push(result);
+                }
+
+                return results;
+            }
+
+            function validate() {
+                //make sure at least one item is ordered
+                if (document.form.hotdogs.value == "0" && document.form.fries.value == "0" && document.form.sodas.value == "0") {
+                    alert("Please order at least one item.")
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        </script>
+    </head>
+
+    <body>
+        <h1>Joe's Hotdogs</h1><br/>
+        <h2>Est. 1985</h2><br/>
+
+        <!--<img src="hotdog.jpg" width="300">-->
+        <form name = "form" onsubmit = "return validate();" method="get" action="#">
+            Hotdogs: $3.75 &nbsp;Quantity:
+            <select id="hotdogs" name="hotdogs">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+            </select><br/>
+            Fries: $2.00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            Quantity: 
+            <select id="fries" name="fries">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+            </select><br/>
+            Soda: $1.80 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            Quantity:
+            <select id="sodas" name="sodas">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+            </select><br/><br/>
+            <!--
+            <input type="select" name = 'n1' id='n3'><br/><br/>
+            <input type="select" name = 'n2' id='n2'><br/><br/>
+            <input type="select" name = 'n3' id='n3'><br/><br/>-->
+            <input type = "button" name = "button1" value = "Order" id = "button1">
+            <br/><br/>
+            <div class="box">
+                <div class = "result" id = "result">&nbsp;</div>
+            </div>
+            <br/>
+            <br/>
+        </form>
+
+        <script language="javascript">
+            //prompt user for order
+            /*numHotdogs = prompt("How many hotdogs do you want?", "");
+            numFries = prompt("How many orders of fries do you want?", "");
+            numSodas = prompt("How many sodas would you like?", "");
+
+            //document.write("Thanks for ordering from Joe's Hotdogs!<br>");
+            
+            //calculate costs of each item
+            pHotdogs = parseFloat(numHotdogs) * 3.75;
+            pFries = parseFloat(numFries) * 2.00;
+            pSodas = parseFloat(numSodas) * 1.80;
+
+            //calculate subtotal
+            subtotal = pHotdogs + pFries + pSodas;
+            subtotal = subtotal.toFixed(2);
+
+            //display order + cost of each item
+            document.write(numHotdogs + " qty Hotdogs: $" + pHotdogs.toFixed(2) + "<br>");
+            document.write(numFries + " qty Fries: $" + pFries.toFixed(2) + "<br>");
+            document.write(numSodas + " qty Sodas: $" + pSodas.toFixed(2) + "<br>");
+
+            //display subtotal
+            document.write("Subtotal: $" + subtotal + "<br>");
+            subtotal = parseFloat(subtotal);
+        
+            //see if order qualifies for discount
+            if (subtotal >= 20) {
+                //calculate and apply 10% discount to subtotal
+                discount = subtotal * 0.1;
+                subtotal = subtotal - discount;
+
+                //round discount and subtotal
+                discountRounded = discount.toFixed(2);
+                subtotalRounded = subtotal.toFixed(2);
+
+                //display discount and updated subtotal
+                document.write("<strong>You received Joe's special offer - a 10% discount!</strong><br>");
+                document.write("Discount applied: -$" + discountRounded + "<br>");
+                document.write("Updated subtotal: $" + subtotalRounded + "<br>");
+            }
+
+            //calculate and round sales tax (6.25%)
+            tax = subtotal * 0.0625;
+            taxRounded = tax.toFixed(2);
+
+            //display tax
+            document.write("Massachusetts meals tax: $" + taxRounded + "<br>");
+
+            //calculate and display total
+            total = subtotal + tax;
+            total = total.toFixed(2);
+            document.write("<strong>Total: $" + total + "</strong>");*/
+        </script>
+    </body>
+</html>
